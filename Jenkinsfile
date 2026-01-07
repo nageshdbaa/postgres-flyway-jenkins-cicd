@@ -11,8 +11,8 @@ pipeline {
         stage('Sync SQL to Flyway Server') {
             steps {
                 sh '''
-                rm -f /opt/flyway/sql/*.sql
-                cp -v sql/*.sql /opt/flyway/sql/
+                  rm -f /opt/flyway/sql/*.sql
+                  cp -v sql/*.sql /opt/flyway/sql/
                 '''
             }
         }
@@ -20,22 +20,23 @@ pipeline {
         stage('Flyway Info (Before)') {
             steps {
                 sh '''
-                ${FLYWAY_HOME}/flyway -configFiles=${FLYWAY_CONF} info
+                  ${FLYWAY_HOME}/flyway -configFiles=${FLYWAY_CONF} info
                 '''
             }
         }
 
-
         stage('Flyway Repair (LAB ONLY)') {
+            steps {
                 sh '''
-                /opt/flyway/flyway -configFiles=/opt/flyway/conf/flyway.conf repair
-                 '''
+                  ${FLYWAY_HOME}/flyway -configFiles=${FLYWAY_CONF} repair
+                '''
+            }
         }
 
         stage('Flyway Migrate') {
             steps {
                 sh '''
-                ${FLYWAY_HOME}/flyway -configFiles=${FLYWAY_CONF} migrate
+                  ${FLYWAY_HOME}/flyway -configFiles=${FLYWAY_CONF} migrate
                 '''
             }
         }
@@ -43,7 +44,7 @@ pipeline {
         stage('Flyway Validate (After)') {
             steps {
                 sh '''
-                ${FLYWAY_HOME}/flyway -configFiles=${FLYWAY_CONF} validate
+                  ${FLYWAY_HOME}/flyway -configFiles=${FLYWAY_CONF} validate
                 '''
             }
         }
