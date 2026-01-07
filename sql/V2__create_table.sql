@@ -1,4 +1,4 @@
-CREATE TABLE test_flyway_git (
-  id SERIAL PRIMARY KEY,
-  note TEXT
+CREATE TABLE IF NOT EXISTS test_flyway (
+    id   SERIAL PRIMARY KEY,
+    note TEXT
 );
