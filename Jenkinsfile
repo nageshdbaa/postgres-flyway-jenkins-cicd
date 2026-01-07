@@ -25,6 +25,13 @@ pipeline {
             }
         }
 
+
+        stage('Flyway Repair (LAB ONLY)') {
+                sh '''
+                /opt/flyway/flyway -configFiles=/opt/flyway/conf/flyway.conf repair
+                 '''
+        }
+
         stage('Flyway Migrate') {
             steps {
                 sh '''
