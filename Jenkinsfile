@@ -9,53 +9,36 @@ pipeline {
 
   stages {
 
-    stage('Checkout from GitHub') {
-      steps {
-        git branch: 'main',
-            url: 'https://github.com/nageshdbaa/postgres-flyway-jenkins-cicd.git'
-      }
-    }
-
     stage('Sync SQL to Flyway Server') {
       steps {
         sh '''
-          rm -rf ${SQL_DIR}/*
-          cp -r sql/* ${SQL_DIR}/
-          ls -lrt ${SQL_DIR}
+          rm -f ${SQL_DIR}/V1__*.sql ${SQL_DIR}/V2__*.sql || true
+          cp -v sql/*.sql ${SQL_DIR}/
         '''
       }
     }
 
     stage('Flyway Validate') {
       steps {
-        sh '''
-          ${FLYWAY_HOME}/flyway \
-            -configFiles=${FLYWAY_CONF} validate
-        '''
+        sh '${FLYWAY_HOME}/flyway -configFiles=${FLYWAY_CONF} validate'
       }
     }
 
     stage('Flyway Info') {
       steps {
-        sh '''
-          ${FLYWAY_HOME}/flyway \
-            -configFiles=${FLYWAY_CONF} info
-        '''
+        sh '${FLYWAY_HOME}/flyway -configFiles=${FLYWAY_CONF} info'
       }
     }
 
     stage('Approve PROD Deployment') {
       steps {
-        input message: 'Approve DB changes?'
+        input message: 'Approve database deployment?'
       }
     }
 
     stage('Flyway Migrate') {
       steps {
-        sh '''
-          ${FLYWAY_HOME}/flyway \
-            -configFiles=${FLYWAY_CONF} migrate
-        '''
+        sh '${FLYWAY_HOME}/flyway -configFiles=${FLYWAY_CONF} migrate'
       }
     }
   }
